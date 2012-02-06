@@ -18,8 +18,8 @@ Usage:
 class tomcat::redhat inherits tomcat::package {
 
   # avoid partial configuration on untested-redhat-release
-  if versioncmp($operatingsystemversion, 5.0) < 0 or versioncmp($operatingsystemversion, 7.0) >= 0 {
-    fail "class ${name} not tested on ${operatingsystem}/${operatingsystemversion}"
+  if versioncmp($operatingsystemrelease, 5.0) < 0 or versioncmp($operatingsystemrelease, 7.0) >= 0 {
+    fail "class ${name} not tested on ${operatingsystem}/${operatingsystemrelease}"
   }
 
   package { [
@@ -28,7 +28,7 @@ class tomcat::redhat inherits tomcat::package {
     ]: ensure => present 
   }
 
-  if versioncmp($operatingsystemversion, 6.0) >= 0 {
+  if versioncmp($operatingsystemrelease, 6.0) >= 0 {
     $tomcat = "tomcat6"
 
     # replaced the /usr/sbin/tomcat6 included script with setclasspath.sh and catalina.sh
