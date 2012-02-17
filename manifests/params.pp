@@ -34,13 +34,21 @@ class tomcat::params {
   } else {
     $type = "package"
     if $tomcat_version { notify {"\$tomcat_version is not useful when using distribution package!":} }
-    $maj_version = $operatingsystem ? {
-      "Debian" => $lsbdistcodename ? {
-        /lenny|squeeze/ => "6",
-      },
-      "RedHat" => $lsbdistcodename ? {
-        "Tikanga"  => "5.5",
-        "Santiago" => "6",
+    case $operatingsystem {
+      "Debian": {
+        $maj_version = $lsbdistcodename ? {
+          /lenny|squeeze/ => "6",
+        }
+      }
+      "RedHat","CentOS": {
+        case $operatingsystemrelease {
+          /^5/: {
+            $maj_version = "5.5"
+          }
+          /^6/: {
+            $maj_version = "6"
+          }
+        }
       }
     }
 
