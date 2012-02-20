@@ -18,8 +18,8 @@ Usage:
 class tomcat::redhat inherits tomcat::package {
 
   # avoid partial configuration on untested-redhat-release
-  if $lsbdistcodename !~ /^(Tikanga|Santiago)$/ {
-    fail "class ${name} not tested on ${operatingsystem}/${lsbdistcodename}"
+  if versioncmp($operatingsystemrelease, 5.0) < 0 or versioncmp($operatingsystemrelease, 7.0) >= 0 {
+    fail "class ${name} not tested on ${operatingsystem}/${operatingsystemrelease}"
   }
 
   package { [
@@ -28,52 +28,48 @@ class tomcat::redhat inherits tomcat::package {
     ]: ensure => present 
   }
 
-  case $lsbdistcodename {
+  if versioncmp($operatingsystemrelease, 6.0) >= 0 {
+    $tomcat = "tomcat6"
 
-    Tikanga: {
-      $tomcat = "tomcat5"
-      $tomcat_home = "/var/lib/tomcat5"
-
-      # link logging libraries from java
-      include tomcat::logging
-     
-      file {"/usr/share/tomcat5/bin/catalina.sh":
-        ensure  => link,
-        target  => "/usr/bin/dtomcat5",
-        require => Package["tomcat"],
-      }
-
-      Package["tomcat"] { 
-        name   => $tomcat,
-        before => [File["commons-logging.jar"], File["log4j.jar"], File["log4j.properties"]],  
-      }
-
+    # replaced the /usr/sbin/tomcat6 included script with setclasspath.sh and catalina.sh
+    file {"/usr/share/${tomcat}/bin/setclasspath.sh":
+      ensure => present,
+      owner  => root,
+      group  => root,
+      mode   => 755,
+      source => "puppet:///modules/tomcat/setclasspath.sh-6.0.24" ,
+      require => [ Package["tomcat"], File["/usr/share/${tomcat}"] ],
     }
 
-    Santiago: {
-      $tomcat = "tomcat6"
+    file {"/usr/share/${tomcat}/bin/catalina.sh":
+      ensure  => present,
+      owner   => root,
+      group   => root,
+      mode    => 755,
+      source  => "puppet:///modules/tomcat/catalina.sh-6.0.24",
+      require => File["/usr/share/${tomcat}/bin/setclasspath.sh"],
+    }
 
-      # replaced the /usr/sbin/tomcat6 included script with setclasspath.sh and catalina.sh
-      file {"/usr/share/${tomcat}/bin/setclasspath.sh":
-        ensure => present,
-        owner  => root,
-        group  => root,
-        mode   => 755,
-        source => "puppet:///modules/tomcat/setclasspath.sh-6.0.24" ,
-        require => [ Package["tomcat"], File["/usr/share/${tomcat}"] ],
-      }
+    Package["tomcat"] { name => $tomcat }
 
-      file {"/usr/share/${tomcat}/bin/catalina.sh":
-        ensure  => present,
-        owner   => root,
-        group   => root,
-        mode    => 755,
-        source  => "puppet:///modules/tomcat/catalina.sh-6.0.24",
-        require => File["/usr/share/${tomcat}/bin/setclasspath.sh"],
-      }
-      
-      Package["tomcat"] { name => $tomcat }
 
+  }
+  else {
+    $tomcat = "tomcat5"
+    $tomcat_home = "/var/lib/tomcat5"
+
+    # link logging libraries from java
+    include tomcat::logging
+
+    file {"/usr/share/tomcat5/bin/catalina.sh":
+      ensure  => link,
+      target  => "/usr/bin/dtomcat5",
+      require => Package["tomcat"],
+    }
+
+    Package["tomcat"] { 
+      name   => $tomcat,
+      before => [File["commons-logging.jar"], File["log4j.jar"], File["log4j.properties"]],  
     }
   }
 

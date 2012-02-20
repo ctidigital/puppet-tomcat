@@ -177,7 +177,7 @@ define tomcat::instance($ensure="present",
     }
   }
 
-  if $tomcat::params::type == "package" and $lsbdistcodename == "Santiago" {
+  if $tomcat::params::type == "package" and ($operatingsystem == "RedHat" or $operatingsystem == "CentOS") and versioncmp($operatingsystemrelease, "6.0") >= 0 {
     # force catalina.sh to use the common library in CATALINA_HOME and not CATALINA_BASE
     $classpath = "/usr/share/tomcat6/bin/tomcat-juli.jar" 
   }
@@ -193,8 +193,8 @@ define tomcat::instance($ensure="present",
 
   if $tomcat::params::maj_version == "5.5" and $tomcat::params::type == "package" {
     $catalinahome = $operatingsystem ? {
-      RedHat => "/usr/share/tomcat5",
       CentOS => "/usr/share/tomcat5",
+      RedHat => "/usr/share/tomcat5",
       Debian => "/usr/share/tomcat5.5",
       Ubuntu => "/usr/share/tomcat5.5",
     }
@@ -220,7 +220,7 @@ define tomcat::instance($ensure="present",
   # Define default JAVA_HOME used in tomcat.init.erb
   if $java_home == "" {
     case $operatingsystem {
-      'RedHat','CentOS': {
+      RedHat,CentOS: {
         $javahome = "/usr/lib/jvm/java"
       }
       Debian,Ubuntu: {
