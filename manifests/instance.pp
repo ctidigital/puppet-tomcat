@@ -191,21 +191,37 @@ define tomcat::instance($ensure="present",
     $serverdotxml = "server.xml.tomcat6.erb"
   }
 
+  if $tomcat::params::maj_version == "7" {
+    $serverdotxml = "server.xml.tomcat7.erb"
+  }
+
   if $tomcat::params::maj_version == "5.5" and $tomcat::params::type == "package" {
     $catalinahome = $operatingsystem ? {
-      CentOS => "/usr/share/tomcat5",
-      RedHat => "/usr/share/tomcat5",
-      Debian => "/usr/share/tomcat5.5",
-      Ubuntu => "/usr/share/tomcat5.5",
+      CentOS  => "/usr/share/tomcat5",
+      RedHat  => "/usr/share/tomcat5",
+      Debian  => "/usr/share/tomcat5.5",
+      Ubuntu  => "/usr/share/tomcat5.5",
+      default => "/usr/share/tomcat5.5"
     }
   }
 
   if $tomcat::params::maj_version == "6" and $tomcat::params::type == "package" {
     $catalinahome = $operatingsystem ? {
-      RedHat => "/usr/share/tomcat6",
-      CentOS => "/usr/share/tomcat6",
-      Debian => "/usr/share/tomcat6",
-      Ubuntu => "/usr/share/tomcat6",
+      RedHat  => "/usr/share/tomcat6",
+      CentOS  => "/usr/share/tomcat6",
+      Debian  => "/usr/share/tomcat6",
+      Ubuntu  => "/usr/share/tomcat6",
+      default => "/usr/share/tomcat6",
+    }
+  }
+
+  if $tomcat::params::maj_version == "7" and $tomcat::params::type == "package" {
+    $catalinahome = $operatingsystem ? {
+      RedHat  => "/usr/share/tomcat7",
+      CentOS  => "/usr/share/tomcat7",
+      Debian  => "/usr/share/tomcat7",
+      Ubuntu  => "/usr/share/tomcat7",
+      default => "/usr/share/tomcat7",
     }
   }
 
