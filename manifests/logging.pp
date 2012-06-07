@@ -15,38 +15,45 @@ class tomcat::logging {
 
   include tomcat::params
 
-  if ( ! $tomcat_home ) {
+  if ( ! $::tomcat_home ) {
     err('undefined mandatory attribute: $tomcat_home')
   }
 
   file {"commons-logging.jar":
-    path   => $tomcat::params::maj_version ? {
-      "5.5" => "${tomcat_home}/common/lib/commons-logging.jar",
-      "6"   => "${tomcat_home}/lib/commons-logging.jar",
+    path => $tomcat::params::maj_version ? {
+      "5.5"   => "${::tomcat_home}/common/lib/commons-logging.jar",
+      "6"     => "${::tomcat_home}/lib/commons-logging.jar",
+      "7"     => "${::tomcat_home}/lib/commons-logging.jar",
+      default => "${::tomcat_home}/lib/commons-logging.jar",
     },
     ensure => link,
     target => "/usr/share/java/commons-logging.jar",
   }
 
   file {"log4j.jar":
-    path   => $tomcat::params::maj_version ? {
-      "5.5" => "${tomcat_home}/common/lib/log4j.jar",
-      "6"   => "${tomcat_home}/lib/log4j.jar",
+    path => $tomcat::params::maj_version ? {
+      "5.5"   => "${::tomcat_home}/common/lib/log4j.jar",
+      "6"     => "${::tomcat_home}/lib/log4j.jar",
+      "7"     => "${::tomcat_home}/lib/log4j.jar",
+      default => "${::tomcat_home}/lib/log4j.jar",
     },
     ensure => link,
-    target => $operatingsystem ? {
+    target => $::operatingsystem ? {
       /Debian|Ubuntu/ => "/usr/share/java/log4j-1.2.jar",
       /RedHat|CentOS/ => "/usr/share/java/log4j.jar",
+      default         => "/usr/share/java/log4j.jar",
     },
   }
 
   file {"log4j.properties":
-    path   => $tomcat::params::maj_version ? {
-      "5.5" =>  "${tomcat_home}/common/lib/log4j.properties",
-      "6"   =>  "${tomcat_home}/lib/log4j.properties",
+    path => $tomcat::params::maj_version ? {
+      "5.5"   =>  "${::tomcat_home}/common/lib/log4j.properties",
+      "6"     =>  "${::tomcat_home}/lib/log4j.properties",
+      "7"     =>  "${::tomcat_home}/lib/log4j.properties",
+      default =>  "${::tomcat_home}/lib/log4j.properties",
     },
-    source => $log4j_conffile ? {
-      default => $log4j_conffile,
+    source => $::log4j_conffile ? {
+      default => $::log4j_conffile,
       ""      => "puppet:///modules/tomcat/conf/log4j.rolling.properties",
     },
   }

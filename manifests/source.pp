@@ -27,7 +27,7 @@ class tomcat::source inherits tomcat::base {
 
   include tomcat::params
 
-  case $operatingsystem {
+  case $::operatingsystem {
     RedHat,CentOS: {
       package { ["log4j", "jakarta-commons-logging"]: ensure => present }
     }
@@ -55,7 +55,7 @@ class tomcat::source inherits tomcat::base {
   
   $tomcaturl = "${baseurl}/apache-tomcat-${tomcat::params::version}.tar.gz"
 
-  common::archive{ "apache-tomcat-${tomcat::params::version}":
+  archive{ "apache-tomcat-${tomcat::params::version}":
     url         => $tomcaturl,
     digest_url  => "${tomcaturl}.md5",
     digest_type => "md5",
