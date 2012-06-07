@@ -38,8 +38,7 @@ class tomcat::source inherits tomcat::base {
 
   $tomcat_home = "/opt/apache-tomcat-${tomcat::params::version}"
 
-  #if $tomcat::params::maj_version == "6" or $tomcat::params::maj_version == "7" {
-  if $tomcat::params::maj_version == "6" {
+  if $tomcat::params::maj_version == "6" or $tomcat::params::maj_version == "7" {
     # install extra tomcat juli adapters, used to configure logging.
     include tomcat::juli
   }
