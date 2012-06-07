@@ -27,7 +27,7 @@ class tomcat::juli {
     require => File[$::tomcat_home],
   }
 
-  archive::download { "tomcat-juli.jar":
+  common::archive::download { "tomcat-juli.jar":
     url         => "${baseurl}/extras/tomcat-juli.jar",
     digest_url  => "${baseurl}/extras/tomcat-juli.jar.md5",
     digest_type => "md5",
@@ -35,7 +35,7 @@ class tomcat::juli {
     require     => File["${::tomcat_home}/extras/"],
   }
 
-  archive::download { "tomcat-juli-adapters.jar":
+  common::archive::download { "tomcat-juli-adapters.jar":
     url         => "${baseurl}/extras/tomcat-juli-adapters.jar",
     digest_url  => "${baseurl}/extras/tomcat-juli-adapters.jar.md5",
     digest_type => "md5",
