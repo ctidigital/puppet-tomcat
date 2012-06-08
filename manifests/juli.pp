@@ -51,13 +51,13 @@ class tomcat::juli {
   file { "${::tomcat_home}/bin/tomcat-juli.jar":
     ensure  => link,
     target  => "${::tomcat_home}/extras/tomcat-juli.jar",
-    require => Common::Archive::Download["tomcat-juli.jar"],
+    require => Archive::Download["tomcat-juli.jar"],
   }
 
   file { "${::tomcat_home}/lib/tomcat-juli-adapters.jar":
     ensure  => link,
     target  => "${::tomcat_home}/extras/tomcat-juli-adapters.jar",
-    require => Common::Archive::Download["tomcat-juli-adapters.jar"],
+    require => Archive::Download["tomcat-juli-adapters.jar"],
   }
 
 }

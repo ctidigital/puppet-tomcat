@@ -65,13 +65,13 @@ class tomcat::source inherits tomcat::base {
   file {"/opt/apache-tomcat":
     ensure  => link,
     target  => $tomcat_home,
-    require => Common::Archive["apache-tomcat-${tomcat::params::version}"],
+    require => Archive["apache-tomcat-${tomcat::params::version}"],
     before  => [File["commons-logging.jar"], File["log4j.jar"], File["log4j.properties"]],
   }
 
   file { $tomcat_home:
     ensure  => directory,
-    require => Common::Archive["apache-tomcat-${tomcat::params::version}"],
+    require => Archive["apache-tomcat-${tomcat::params::version}"],
   }
 
     # Workarounds
@@ -81,7 +81,7 @@ class tomcat::source inherits tomcat::base {
       file {"${tomcat_home}/bin/catalina.sh":
         ensure  => present,
         source  => "puppet:///modules/tomcat/catalina.sh-6.0.18",
-        require => Common::Archive["apache-tomcat-${tomcat::params::version}"],
+        require => Archive["apache-tomcat-${tomcat::params::version}"],
         mode => "755",
       }
     }
