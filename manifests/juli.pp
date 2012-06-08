@@ -16,7 +16,7 @@ class tomcat::juli {
 
   include tomcat::params
 
-  if ( ! $::tomcat_home ) {
+  if ( ! ${::tomcat_home} ) {
     err('undefined mandatory attribute: $tomcat_home')
   }
 
@@ -29,7 +29,7 @@ class tomcat::juli {
 
   file { "${::tomcat_home}/extras/":
     ensure  => directory,
-    require => File[$::tomcat_home],
+    require => File[${::tomcat_home}],
   }
 
   archive::download { "tomcat-juli.jar":

@@ -15,7 +15,7 @@ class tomcat::logging {
 
   include tomcat::params
 
-  if ( ! $::tomcat_home ) {
+  if ( ! ${::tomcat_home} ) {
     err('undefined mandatory attribute: $tomcat_home')
   }
 
