@@ -43,7 +43,7 @@ class tomcat::source inherits tomcat::base {
     include tomcat::juli
   }
 
-  # link logging libraries from java
+  #  link logging libraries from java
   include tomcat::logging
 
   $baseurl = $tomcat::params::maj_version ? {
