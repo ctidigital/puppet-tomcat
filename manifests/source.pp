@@ -26,6 +26,7 @@ Usage:
 class tomcat::source inherits tomcat::base {
 
   include tomcat::params
+  include tomcat::redhat_lsb
 
   case $::operatingsystem {
     RedHat,CentOS: {
