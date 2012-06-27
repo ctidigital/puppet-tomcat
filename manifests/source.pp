@@ -65,7 +65,7 @@ class tomcat::source inherits tomcat::base {
   file {"/opt/apache-tomcat":
     ensure  => link,
     target  => $tomcat_home,
-    require => Archive["apache-tomcat-${tomcat::params::version}"],
+    require => [[Class['tomcat::redhat_lsb']],[Archive["apache-tomcat-${tomcat::params::version}"]]],
     before  => [File["commons-logging.jar"], File["log4j.jar"], File["log4j.properties"]],
   }
 
