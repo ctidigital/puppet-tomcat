@@ -111,7 +111,7 @@ define tomcat::instance($ensure="present",
                         $seltype=undef) {
 
   include tomcat::params
-  
+
   $tomcat_name = $name
   $basedir = "${tomcat::params::instance_basedir}/${name}"
 
@@ -139,9 +139,9 @@ define tomcat::instance($ensure="present",
   }
 
   if $connector == [] and $server_xml_file == "" {
-    
+
     $connectors = ["http-${http_port}-${name}","ajp-${ajp_port}-${name}"]
-    
+
     tomcat::connector{"http-${http_port}-${name}":
       ensure   => $ensure ? {
         "absent" => absent,
@@ -182,9 +182,9 @@ define tomcat::instance($ensure="present",
     }
   }
 
-  if $tomcat::params::type == "package" and $lsbdistcodename == "Santiago" {
+  if $tomcat::params::type == "package" and ($operatingsystem == "RedHat" or $operatingsystem == "CentOS") and versioncmp($operatingsystemrelease, "6.0") >= 0 {
     # force catalina.sh to use the common library in CATALINA_HOME and not CATALINA_BASE
-    $classpath = "/usr/share/tomcat6/bin/tomcat-juli.jar" 
+    $classpath = "/usr/share/tomcat6/bin/tomcat-juli.jar"
   }
 
   # default server.xml is slightly different between tomcat5.5 and tomcat6
@@ -196,19 +196,37 @@ define tomcat::instance($ensure="present",
     $serverdotxml = "server.xml.tomcat6.erb"
   }
 
+  if $tomcat::params::maj_version == "7" {
+    $serverdotxml = "server.xml.tomcat7.erb"
+  }
+
   if $tomcat::params::maj_version == "5.5" and $tomcat::params::type == "package" {
     $catalinahome = $operatingsystem ? {
-      RedHat => "/usr/share/tomcat5",
-      Debian => "/usr/share/tomcat5.5",
-      Ubuntu => "/usr/share/tomcat5.5",
+      CentOS  => "/usr/share/tomcat5",
+      RedHat  => "/usr/share/tomcat5",
+      Debian  => "/usr/share/tomcat5.5",
+      Ubuntu  => "/usr/share/tomcat5.5",
+      default => "/usr/share/tomcat5.5"
     }
   }
 
   if $tomcat::params::maj_version == "6" and $tomcat::params::type == "package" {
     $catalinahome = $operatingsystem ? {
-      RedHat => "/usr/share/tomcat6",
-      Debian => "/usr/share/tomcat6",
-      Ubuntu => "/usr/share/tomcat6",
+      RedHat  => "/usr/share/tomcat6",
+      CentOS  => "/usr/share/tomcat6",
+      Debian  => "/usr/share/tomcat6",
+      Ubuntu  => "/usr/share/tomcat6",
+      default => "/usr/share/tomcat6",
+    }
+  }
+
+  if $tomcat::params::maj_version == "7" and $tomcat::params::type == "package" {
+    $catalinahome = $operatingsystem ? {
+      RedHat  => "/usr/share/tomcat7",
+      CentOS  => "/usr/share/tomcat7",
+      Debian  => "/usr/share/tomcat7",
+      Ubuntu  => "/usr/share/tomcat7",
+      default => "/usr/share/tomcat7",
     }
   }
 
@@ -223,7 +241,7 @@ define tomcat::instance($ensure="present",
   # Define default JAVA_HOME used in tomcat.init.erb
   if $java_home == "" {
     case $operatingsystem {
-      RedHat: {
+      RedHat,CentOS: {
         $javahome = "/usr/lib/jvm/java"
       }
       Debian,Ubuntu: {
@@ -252,14 +270,14 @@ define tomcat::instance($ensure="present",
             "adm"   => undef,
             default => Group[$group],
           };
-    
+
         "${basedir}/bin":
           ensure => directory,
           owner  => "root",
           group  => $group,
           mode   => 755,
           before => Service["tomcat-${name}"];
-    
+
         # Developpers usually write there
         "${basedir}/conf":
           ensure => directory,
@@ -299,7 +317,7 @@ define tomcat::instance($ensure="present",
           notify  => $manage? {
             true    => Service["tomcat-${name}"],
             default => undef,
-          }, 
+          },
           require => $server_xml_file? {
             ""      => undef,
             default => Tomcat::Connector[$connectors],
@@ -339,7 +357,7 @@ define tomcat::instance($ensure="present",
           group  => $group,
           mode   => $dirmode,
           before => Service["tomcat-${name}"];
-    
+
         # Tomcat usually write there
         "${basedir}/logs":
           ensure => directory,
@@ -403,6 +421,7 @@ define tomcat::instance($ensure="present",
     group  => $group,
     mode   => 754,
     before => Service["tomcat-${name}"],
+    notify => Service["tomcat-${name}"],
   }
 
   # User customized JVM options

@@ -1,6 +1,7 @@
 class tomcat::params {
 
-  $default_source_release = "6.0.26"
+  $default_source_release     = "7.0.27"
+  $default_source_release_v6  = "6.0.26"
   $default_source_release_v55 = "5.5.27"
 
   $instance_basedir = $tomcat_instance_basedir ? {
@@ -21,13 +22,17 @@ class tomcat::params {
       $version = $default_source_release
     } else {
       $version = $tomcat_version
-      if versioncmp($tomcat_version, '6.0.0') >= 0 {
-        $maj_version = "6"
+      if versioncmp($tomcat_version, '7.0.0') >= 0 {
+        $maj_version = "7"
       } else {
-        if versioncmp($tomcat_version, '5.5.0') >= 0 {
-          $maj_version = "5.5"
+        if versioncmp($tomcat_version, '6.0.0') >= 0 {
+          $maj_version = "6"
         } else {
-          fail "only versions >= 5.5 or >= 6.0 are supported !"
+          if versioncmp($tomcat_version, '5.5.0') >= 0 {
+            $maj_version = "5.5"
+          } else {
+            fail "only versions between 5.5 and 7.0 are supported !"
+          }
         }
       }
     }
@@ -43,14 +48,15 @@ class tomcat::params {
         "Santiago" => "6",
       },
       "Ubuntu" => $lsbdistcodename ? {
-        "precise" => "6",
+        "precise" => "7",
       }
     }
 
     # it would be better to set the distribution tomcat-version!
     $version = $maj_version ? {
-      "5.5" => $default_source_release_v55,
-      "6"   => $default_source_release,
+      "5.5"   => $default_source_release_v55,
+      "6"     => $default_source_release_v6,
+      default => $default_source_release
     }
 
   }

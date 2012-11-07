@@ -2,7 +2,7 @@
 
 == Class: tomcat::source
 
-Installs tomcat 5.5.X or 6.0.X using the compressed archive from your favorite tomcat
+Installs tomcat 5.5.X, 6.0.X or 7.0.X using the compressed archive from your favorite tomcat
 mirror. Files from the archive will be installed in /opt/apache-tomcat/.
 
 Class variables:
@@ -26,9 +26,10 @@ Usage:
 class tomcat::source inherits tomcat::base {
 
   include tomcat::params
+  include tomcat::redhat_lsb
 
-  case $operatingsystem {
-    RedHat: {
+  case $::operatingsystem {
+    RedHat,CentOS: {
       package { ["log4j", "jakarta-commons-logging"]: ensure => present }
     }
     Debian,Ubuntu: {
@@ -38,17 +39,19 @@ class tomcat::source inherits tomcat::base {
 
   $tomcat_home = "/opt/apache-tomcat-${tomcat::params::version}"
 
-  if $tomcat::params::maj_version == "6" {
+  if $tomcat::params::maj_version == "6" or $tomcat::params::maj_version == "7" {
     # install extra tomcat juli adapters, used to configure logging.
     include tomcat::juli
   }
 
-  # link logging libraries from java
+  #  link logging libraries from java
   include tomcat::logging
 
   $baseurl = $tomcat::params::maj_version ? {
-    "5.5" => "${tomcat::params::mirror}/tomcat-5/v${tomcat::params::version}/bin",
-    "6"   => "${tomcat::params::mirror}/tomcat-6/v${tomcat::params::version}/bin",
+    "5.5"   => "${tomcat::params::mirror}/tomcat-5/v${tomcat::params::version}/bin",
+    "6"     => "${tomcat::params::mirror}/tomcat-6/v${tomcat::params::version}/bin",
+    "7"     => "${tomcat::params::mirror}/tomcat-7/v${tomcat::params::version}/bin",
+    default => "${tomcat::params::mirror}/tomcat-7/v${tomcat::params::version}/bin",
   }
   
   $tomcaturl = "${baseurl}/apache-tomcat-${tomcat::params::version}.tar.gz"
