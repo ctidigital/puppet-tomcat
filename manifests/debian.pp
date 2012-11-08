@@ -21,8 +21,8 @@ class tomcat::debian inherits tomcat::package {
     fail "class ${name} not tested on ${operatingsystem}/${lsbdistcodename}"
   }
 
-  $tomcat = "tomcat6"
-  $tomcat_home = "/usr/share/tomcat6"
+  $tomcat = "tomcat7"
+  $tomcat_home = "/usr/share/tomcat7"
 
   # Workaround while tomcat-juli.jar and tomcat-juli-adapters.jar aren't
   # included in tomcat6-* packages.
