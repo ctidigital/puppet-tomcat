@@ -13,6 +13,7 @@ class tomcat::package inherits tomcat::base {
   }
 
   service { "tomcat":
+    name      => $tomcat,
     ensure    => stopped,
     enable    => false,
     hasstatus => false,
