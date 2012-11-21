@@ -55,7 +55,7 @@ Example usage:
 */
 define tomcat::executor($ensure="present",
                         $instance,
-                        $owner="tomcat",
+                        $owner="tomcat7",
                         $group="adm",
                         $thread_priority=false,
                         $daemon=true,
@@ -67,7 +67,7 @@ define tomcat::executor($ensure="present",
 
   include tomcat::params
 
-  if $owner == "tomcat" {
+  if $owner == "tomcat7" {
     $filemode = 0460
   } else {
     $filemode = 0664

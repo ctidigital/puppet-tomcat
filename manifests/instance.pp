@@ -89,7 +89,7 @@ Example usage:
 
 */
 define tomcat::instance($ensure="present",
-                        $owner="tomcat",
+                        $owner="tomcat7",
                         $group="adm",
                         $server_port="8005",
                         $http_port="8080",
@@ -115,7 +115,7 @@ define tomcat::instance($ensure="present",
   $tomcat_name = $name
   $basedir = "${tomcat::params::instance_basedir}/${name}"
 
-  if $owner == "tomcat" {
+  if $owner == "tomcat7" {
     $dirmode  = $webapp_mode ? {
       ""      => 2770,
       default => $webapp_mode,
@@ -361,19 +361,19 @@ define tomcat::instance($ensure="present",
         # Tomcat usually write there
         "${basedir}/logs":
           ensure => directory,
-          owner  => "tomcat",
+          owner  => "tomcat7",
           group  => $group,
           mode   => 2770,
           before => Service["tomcat-${name}"];
         "${basedir}/work":
           ensure => directory,
-          owner  => "tomcat",
+          owner  => "tomcat7",
           group  => $group,
           mode   => 2770,
           before => Service["tomcat-${name}"];
         "${basedir}/temp":
           ensure => directory,
-          owner  => "tomcat",
+          owner  => "tomcat7",
           group  => $group,
           mode   => 2770,
           before => Service["tomcat-${name}"];
@@ -386,7 +386,7 @@ define tomcat::instance($ensure="present",
         #
         file { "${basedir}/webapps/sample.war":
           ensure  => present,
-          owner   => "tomcat",
+          owner   => "tomcat7",
           group   => $group,
           mode    => 0460,
           source  => "puppet:///modules/tomcat/sample.war",

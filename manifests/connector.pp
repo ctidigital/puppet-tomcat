@@ -52,7 +52,7 @@ Example usage:
 define tomcat::connector($ensure="present",
                          $instance,
                          $port,
-                         $owner="tomcat",
+                         $owner="tomcat7",
                          $group="adm",
                          $protocol="HTTP/1.1",
                          $uri_encoding="UTF-8",
@@ -66,7 +66,7 @@ define tomcat::connector($ensure="present",
 
   include tomcat::params
 
-  if $owner == "tomcat" {
+  if $owner == "tomcat7" {
     $filemode = 0460
   } else {
     $filemode = 0664

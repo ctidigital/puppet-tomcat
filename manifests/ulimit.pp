@@ -27,7 +27,7 @@ define tomcat::ulimit ($value) {
       "set \"domain[.='tomcat']/value\" ${value}",
       ],
     onlyif  => "match domain[.='tomcat'][type='-'][item='${name}'][value='${value}'] size == 0",
-    before  => User["tomcat"],
+    before  => User["tomcat7"],
   }
 
 }

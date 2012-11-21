@@ -73,7 +73,7 @@ class tomcat::redhat inherits tomcat::package {
     }
   }
 
-  User["tomcat"] { 
+  User["tomcat7"] { 
     require => Package[$tomcat],
   }
 
