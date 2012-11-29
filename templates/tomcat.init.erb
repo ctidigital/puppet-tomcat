@@ -38,7 +38,7 @@ start() {
   # Remove pidfile if still around
   test -f $CATALINA_PID && rm -f $CATALINA_PID
 
-  $SU -s /bin/sh tomcat -c "umask 0002; $CATALINA_HOME/bin/catalina.sh start" > /dev/null
+  $SU -s /bin/sh tomcat7 -c "umask 0002; $CATALINA_HOME/bin/catalina.sh start" > /dev/null
 }
 
 stop() {
@@ -54,7 +54,7 @@ stop() {
 
   count=0
   until [ "$pid" = "" ] || [ $count -gt $SHUTDOWN_WAIT ]; do
-    $SU -s /bin/sh tomcat -c "$CATALINA_HOME/bin/catalina.sh stop -force" > /dev/null
+    $SU -s /bin/sh tomcat7 -c "$CATALINA_HOME/bin/catalina.sh stop -force" > /dev/null
     findpid
 
     echo -n "."
@@ -75,7 +75,7 @@ stop() {
 
 findpid() {
   pid=""
-  pid=$(pgrep -U tomcat -f "^$JAVA_HOME/bin/java.*catalina.base=<%= basedir %>")
+  pid=$(pgrep -U tomcat7 -f "^$JAVA_HOME/bin/java.*catalina.base=<%= basedir %>")
 
   # validate output of pgrep
   if ! [ "$pid" = "" ] && ! [ "$pid" -gt 0 ]; then
